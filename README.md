@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Expo LMS Platform
 
-## Getting Started
+Expo LMS is a full-featured Learning Management System (LMS) platform that allows users to register, browse courses, purchase them, and access course content. It also features an admin dashboard for managing courses, users, and analytics.
 
-First, run the development server:
+## Technologies Used
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend**: Next.js, Redux
+- **Backend**: Node.js, Express.js, Mongoose
+- **Database**: MongoDB
+- **Authentication**: JWT (JSON Web Tokens) for authentication and authorization
+- **File Upload**: Cloudinary for image and video uploads
+- **Payments**: Stripe for course purchases
+- **State Management**: Redux for handling global state
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### User Features:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Account Registration**: Users can register an account and will receive a verification code via email to complete the sign-up process.
+- **Course Browsing**: Users can view available courses on the courses page, and see detailed information about each course on the course details page.
+- **Course Purchase**: Users can purchase a course using Stripe for secure payments.
+- **User Dashboard**:
+  - **Profile**: Users can view and edit their profile information.
+  - **Order History**: Users can view their order history.
+  - **Password Change**: Users can update their password in the Change Password page.
+- **Course Access**: Users can see all the courses they have purchased and continue learning from where they left off by accessing course content.
 
-## Learn More
+### Admin Features:
 
-To learn more about Next.js, take a look at the following resources:
+- **Admin Dashboard**:
+  - **Platform Statistics**: Admins can see key statistics about the platform, including user and course data.
+  - **Course Management**:
+    - Create a course and upload modules.
+    - Edit course details and add new modules.
+    - View a list of all courses and manage them.
+  - **Invoices**: View a list of all transactions and monitor platform earnings.
+  - **User Management**: View all users and promote them to admin.
+  - **Analytics**:
+    - **Course Analytics**: See insights into course performance.
+    - **User Analytics**: Get detailed information on user activity.
+    - **Order Analytics**: View order data in detailed charts.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+To set up and run the project locally, follow these steps:
 
-## Deploy on Vercel
+1. **Clone the repository**:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   git clone https://github.com/saiyedimtiaj/LMS-Platfrom.git
+   cd LMS-Platfrom
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+2. **Install the dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+   Create a `.env` file in the root directory and add the following variables:
+
+   ```bash
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   STRIPE_SECRET_KEY=your_stripe_secret_key
+   STRIPE_PUBLIC_KEY=your_stripe_public_key
+   GOOGLE_SECRET_ID=your google secret id
+   ```
+
+4. **Run the application**:
+
+   - For development:
+
+     ```bash
+     npm run dev
+     ```
+
+   - For production:
+     ```bash
+     npm run build
+     npm start
+     ```
+
+## Backend Repository
+
+https://github.com/saiyedimtiaj/LMS-SERVER
+
+## Admin Access
+
+To log in as an admin, use the following credentials:
+
+- **Admin Email**: `admin@example.com`
+- **Admin Password**: `admin123`
+
+## Test Environment
+
+To run tests for the project:
+
+1. **Set up the test environment**:
+   Ensure that your `.env` file is configured with the correct test database and variables.
+2. **Run tests**:
+   ```bash
+   npm run dev
+   ```

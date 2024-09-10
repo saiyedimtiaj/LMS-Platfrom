@@ -7,12 +7,11 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { toast } from "sonner";
 import { useRegisterMutation, useSocialLoginMutation } from "@/redux/feature/auth/authApi";
-import { signIn } from 'next-auth/react';
-import Link from 'next/link';
 import { useDispatch } from "react-redux";
 import { userRegistationToken } from "@/redux/feature/auth/authSlice";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { FaGoogle } from "react-icons/fa";
 
 type Props = {
     isRegisterOpen: boolean;
@@ -79,7 +78,7 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
                 });
                 const userInfo = res.data;
                 const data = await socialLogoin(userInfo).unwrap();
-                setIsSignInOpen(false);
+                setIsRegisterOpen(false);
                 toast.success(data?.message)
             } catch (err: any) {
                 toast.error(err?.data?.message);
@@ -156,11 +155,11 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
                     <div className="flex justify-center">
                         <Button className="w-full mt-3 rounded-lg" type="submit">Create an account</Button>
                     </div>
-                    <Button variant="outline" className="w-full mt-3" onClick={() => googleLogin()}>
-                        Sign up with Google
+                    <Button className="w-full border-gray-300" variant="outline" onClick={() => googleLogin()}>
+                        <FaGoogle size={18} /> <span className="ml-1 text-base">Continue with Google</span>
                     </Button>
                 </form>
-                <div className="mt-4 text-center text-sm">
+                <div className="mt-2 text-center text-sm">
                     Already have an account? <Button className="px-0 underline" onClick={handleModel} variant="link">Sign In</Button>
                 </div>
             </DialogContent>
