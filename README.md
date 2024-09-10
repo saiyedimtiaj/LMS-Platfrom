@@ -91,8 +91,8 @@ https://github.com/saiyedimtiaj/LMS-SERVER
 
 To log in as an admin, use the following credentials:
 
-- **Admin Email**: `admin@example.com`
-- **Admin Password**: `admin123`
+- **Admin Email**: `jegib29182@brinkc.com`
+- **Admin Password**: `123456`
 
 ## Test Environment
 
