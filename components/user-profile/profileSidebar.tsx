@@ -51,10 +51,12 @@ const ProfileSidebar = () => {
                     <SiCoursera size={20} />
                     <h2 className="text-lg hidden md:block font-medium">Courses</h2>
                 </Link>
-                <Link href="/profile/forget-password" className={`${linkStyles} ${pathname === '/profile/forget-password' ? activeLinkStyles : 'text-gray-800 dark:text-gray-300'}`}>
-                    <RiLockPasswordLine size={20} />
-                    <h2 className="text-lg hidden md:block font-medium">Forget-Password</h2>
-                </Link>
+                {
+                    user?.provider !== "google" && <Link href="/profile/forget-password" className={`${linkStyles} ${pathname === '/profile/forget-password' ? activeLinkStyles : 'text-gray-800 dark:text-gray-300'}`}>
+                        <RiLockPasswordLine size={20} />
+                        <h2 className="text-lg hidden md:block font-medium">Forget-Password</h2>
+                    </Link>
+                }
                 {
                     user.role === "Admin" && <Link href="/admin" className={`${linkStyles} cursor-pointer text-gray-800 dark:text-gray-300`}>
                         <MdSpaceDashboard size={20} />

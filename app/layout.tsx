@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from 'sonner';
 import Providers from "./Providers";
 import { ThemeProvider } from "./utils/theme-provider";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -27,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <Toaster position="top-center" />
-      <body className={`${poppins.variable} ${josefin.variable} bg-white bg-no-repeat dark:bg-[#020817] duration-300 dark:from-gray-900`}>
-        <Providers>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-          </ThemeProvider>
-        </Providers>
-      </body>
+      <GoogleOAuthProvider clientId="977853730265-sbpvtot9raf1kunphnt8akgnv0jkca4j.apps.googleusercontent.com">
+        <body className={`${poppins.variable} ${josefin.variable} bg-white bg-no-repeat dark:bg-[#020817] duration-300 dark:from-gray-900`}>
+          <Providers>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              {children}
+            </ThemeProvider>
+          </Providers>
+        </body>
+      </GoogleOAuthProvider>;
     </html>
   );
 }

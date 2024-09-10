@@ -6,11 +6,13 @@ import { Label } from "../ui/label";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { toast } from "sonner";
-import { useRegisterMutation } from "@/redux/feature/auth/authApi";
+import { useRegisterMutation, useSocialLoginMutation } from "@/redux/feature/auth/authApi";
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useDispatch } from "react-redux";
 import { userRegistationToken } from "@/redux/feature/auth/authSlice";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 type Props = {
     isRegisterOpen: boolean;
@@ -34,6 +36,7 @@ type RegisterResponse = {
 
 const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, setIsVerifyOpen }: Props) => {
     const [register] = useRegisterMutation();
+    const [socialLogoin] = useSocialLoginMutation()
     const dispatch = useDispatch()
 
     const handleModel = () => {
@@ -63,6 +66,30 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
     });
 
     const { errors, touched, values, handleChange, handleSubmit } = formik;
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                const { access_token } = tokenResponse;
+                // Fetch user information from Google API
+                const res = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                });
+                const userInfo = res.data;
+                const data = await socialLogoin(userInfo).unwrap();
+                setIsSignInOpen(false);
+                toast.success(data?.message)
+            } catch (err: any) {
+                toast.error(err?.data?.message);
+            }
+        },
+        onError: () => {
+            console.log('Login Failed');
+            toast.error('Google login failed');
+        }
+    });
 
     return (
         <Dialog open={isRegisterOpen} onOpenChange={() => setIsRegisterOpen(!isRegisterOpen)}>
@@ -129,7 +156,7 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
                     <div className="flex justify-center">
                         <Button className="w-full mt-3 rounded-lg" type="submit">Create an account</Button>
                     </div>
-                    <Button variant="outline" className="w-full mt-3" onClick={() => signIn("google")}>
+                    <Button variant="outline" className="w-full mt-3" onClick={() => googleLogin()}>
                         Sign up with Google
                     </Button>
                 </form>

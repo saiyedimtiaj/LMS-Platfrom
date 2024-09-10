@@ -6,9 +6,11 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useLoginMutation } from '@/redux/feature/auth/authApi';
+import { useLoginMutation, useSocialLoginMutation } from '@/redux/feature/auth/authApi';
 import { toast } from 'sonner';
 import { FaGoogle } from 'react-icons/fa';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 type Props = {
     setIsSignInOpen: (isSignInOpen: boolean) => void;
@@ -23,6 +25,7 @@ const schema = Yup.object().shape({
 
 const LoginModal = ({ setIsSignInOpen, isSignInOpen, setIsRegisterOpen }: Props) => {
     const [login, { isSuccess, error }] = useLoginMutation();
+    const [socialLogoin] = useSocialLoginMutation()
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -52,6 +55,30 @@ const LoginModal = ({ setIsSignInOpen, isSignInOpen, setIsRegisterOpen }: Props)
         setIsSignInOpen(false);
         setIsRegisterOpen(true);
     }
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                const { access_token } = tokenResponse;
+                // Fetch user information from Google API
+                const res = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                });
+                const userInfo = res.data;
+                const data = await socialLogoin(userInfo).unwrap();
+                setIsSignInOpen(false);
+                toast.success(data?.message)
+            } catch (err: any) {
+                toast.error(err?.data?.message);
+            }
+        },
+        onError: () => {
+            console.log('Login Failed');
+            toast.error('Google login failed');
+        }
+    });
 
     return (
         <Dialog open={isSignInOpen} onOpenChange={() => setIsSignInOpen(!isSignInOpen)}>
@@ -94,7 +121,7 @@ const LoginModal = ({ setIsSignInOpen, isSignInOpen, setIsRegisterOpen }: Props)
                     <Button className="w-full mt-4" type="submit">Login</Button>
                 </form>
                 <div className="-mb-1">
-                    <Button className="w-full border-gray-300" variant="outline" onClick={() => toast.success("Comming Soon")}>
+                    <Button className="w-full border-gray-300" variant="outline" onClick={() => googleLogin()}>
                         <FaGoogle size={18} /> <span className="ml-1 text-base">Continue with Google</span>
                     </Button>
                 </div>
