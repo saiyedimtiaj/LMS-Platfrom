@@ -1,24 +1,18 @@
-import React, { useEffect } from "react";
+"use client"
+import React from "react";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { toast } from "sonner";
 import { useRegisterMutation, useSocialLoginMutation } from "@/redux/feature/auth/authApi";
-import { useDispatch } from "react-redux";
-import { userRegistationToken } from "@/redux/feature/auth/authSlice";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { FaGoogle } from "react-icons/fa";
-
-type Props = {
-    isRegisterOpen: boolean;
-    setIsRegisterOpen: (isRegisterOpen: boolean) => void;
-    setIsSignInOpen: (isSignInOpen: boolean) => void;
-    setIsVerifyOpen: (isVerifyOpen: boolean) => void;
-}
+import { FaArrowLeft, FaGoogle } from "react-icons/fa";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const schema = Yup.object().shape({
     firstName: Yup.string().required("Please enter your first name"),
@@ -33,15 +27,10 @@ type RegisterResponse = {
     data?: string;
 };
 
-const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, setIsVerifyOpen }: Props) => {
+const RegisterModel = () => {
     const [register] = useRegisterMutation();
-    const [socialLogoin] = useSocialLoginMutation()
-    const dispatch = useDispatch()
-
-    const handleModel = () => {
-        setIsRegisterOpen(false);
-        setIsSignInOpen(true);
-    }
+    const [socialLogoin] = useSocialLoginMutation();
+    const router = useRouter();
 
     const formik = useFormik({
         initialValues: { firstName: "", lastName: "", email: "", password: "" },
@@ -51,9 +40,7 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
                 const response = await register({ name: `${firstName} ${lastName}`, email, password }).unwrap() as RegisterResponse;
                 if (response.success) {
                     toast.success(response.message);
-                    setIsRegisterOpen(false)
-                    dispatch(userRegistationToken(response?.data))
-                    setIsVerifyOpen(true)
+                    router.push(`/verify?activationCode=${response?.data}`)
                 }
             } catch (err: any) {
                 if (err.data && err.data.message) {
@@ -70,7 +57,6 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
         onSuccess: async (tokenResponse) => {
             try {
                 const { access_token } = tokenResponse;
-                // Fetch user information from Google API
                 const res = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                     headers: {
                         Authorization: `Bearer ${access_token}`,
@@ -78,92 +64,97 @@ const RegisterModel = ({ isRegisterOpen, setIsRegisterOpen, setIsSignInOpen, set
                 });
                 const userInfo = res.data;
                 const data = await socialLogoin(userInfo).unwrap();
-                setIsRegisterOpen(false);
-                toast.success(data?.message)
+                toast.success(data?.message);
             } catch (err: any) {
-                toast.error(err?.data?.message);
+                toast.error(err?.data?.message || 'Google login failed');
             }
         },
         onError: () => {
-            console.log('Login Failed');
             toast.error('Google login failed');
         }
     });
 
     return (
-        <Dialog open={isRegisterOpen} onOpenChange={() => setIsRegisterOpen(!isRegisterOpen)}>
-            <DialogContent className="mx-auto max-w-sm">
-                <DialogHeader>
-                    <DialogTitle className="text-xl">Sign Up</DialogTitle>
-                    <p className='text-sm text-gray-500'>Enter your information to create an account</p>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                                type='text'
-                                value={values.firstName}
-                                onChange={handleChange}
-                                id='firstName'
-                                placeholder='Max'
-                                className={`${errors.firstName && touched.firstName ? "border-red-500" : ""}`}
-                                required
-                            />
-                            {errors.firstName && touched.firstName && <span className='text-red-500 pt-1 block'>{errors.firstName}</span>}
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 relative">
+            <Button
+                className="absolute top-4 left-4 flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
+                variant="link"
+                onClick={() => router.push('/')}
+            >
+                <FaArrowLeft className="mr-1" /> Back to Home
+            </Button>
+            <Card className="w-full max-w-md shadow-lg rounded-lg border-0">
+                <CardContent>
+                    <CardHeader className="text-center">
+                        <CardTitle className="text-2xl font-semibold">Sign Up</CardTitle>
+                        <p className='text-sm text-gray-500 dark:text-gray-400'>Enter your information to create an account</p>
+                    </CardHeader>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="firstName">First Name</Label>
+                                <Input
+                                    type='text'
+                                    value={values.firstName}
+                                    onChange={handleChange}
+                                    id='firstName'
+                                    placeholder='Max'
+                                    className={`${errors.firstName && touched.firstName ? "border-red-500" : ""}`}
+                                    required
+                                />
+                                {errors.firstName && touched.firstName && <span className='text-red-500 text-sm'>{errors.firstName}</span>}
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="lastName">Last Name</Label>
+                                <Input
+                                    type='text'
+                                    value={values.lastName}
+                                    onChange={handleChange}
+                                    id='lastName'
+                                    placeholder='Robinson'
+                                    className={`${errors.lastName && touched.lastName ? "border-red-500" : ""}`}
+                                    required
+                                />
+                                {errors.lastName && touched.lastName && <span className='text-red-500 text-sm'>{errors.lastName}</span>}
+                            </div>
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="lastName">Last Name</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
-                                type='text'
-                                value={values.lastName}
+                                type='email'
+                                value={values.email}
                                 onChange={handleChange}
-                                id='lastName'
-                                placeholder='Robinson'
-                                className={`${errors.lastName && touched.lastName ? "border-red-500" : ""}`}
+                                id='email'
+                                placeholder='example@example.com'
+                                className={`${errors.email && touched.email ? "border-red-500" : ""}`}
                                 required
                             />
-                            {errors.lastName && touched.lastName && <span className='text-red-500 pt-1 block'>{errors.lastName}</span>}
+                            {errors.email && touched.email && <span className='text-red-500 text-sm'>{errors.email}</span>}
                         </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            type='email'
-                            value={values.email}
-                            onChange={handleChange}
-                            id='email'
-                            placeholder='example@example.com'
-                            className={`${errors.email && touched.email ? "border-red-500" : ""}`}
-                            required
-                        />
-                        {errors.email && touched.email && <span className='text-red-500 pt-1 block'>{errors.email}</span>}
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            type='password'
-                            value={values.password}
-                            onChange={handleChange}
-                            id='password'
-                            placeholder='••••••••'
-                            className={`${errors.password && touched.password ? "border-red-500" : ""}`}
-                            required
-                        />
-                        {errors.password && touched.password && <span className='text-red-500 pt-1 block'>{errors.password}</span>}
-                    </div>
-                    <div className="flex justify-center">
-                        <Button className="w-full mt-3 rounded-lg" type="submit">Create an account</Button>
-                    </div>
-                    <Button className="w-full border-gray-300" variant="outline" onClick={() => googleLogin()}>
-                        <FaGoogle size={18} /> <span className="ml-1 text-base">Continue with Google</span>
-                    </Button>
-                </form>
-                <div className="mt-2 text-center text-sm">
-                    Already have an account? <Button className="px-0 underline" onClick={handleModel} variant="link">Sign In</Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                type='password'
+                                value={values.password}
+                                onChange={handleChange}
+                                id='password'
+                                placeholder='••••••••'
+                                className={`${errors.password && touched.password ? "border-red-500" : ""}`}
+                                required
+                            />
+                            {errors.password && touched.password && <span className='text-red-500 text-sm'>{errors.password}</span>}
+                        </div>
+                        <Button className="w-full mt-4 rounded-lg" type="submit">Create an account</Button>
+                        <Button className="w-full mt-2 flex items-center justify-center border-gray-300" variant="outline" onClick={() => googleLogin()}>
+                            <FaGoogle size={18} className="mr-2" /> Continue with Google
+                        </Button>
+                    </form>
+                    <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-300">
+                        Already have an account? <Link href='/signin'><Button className="px-0 underline" variant="link">Sign In</Button></Link>
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
     );
 };
 

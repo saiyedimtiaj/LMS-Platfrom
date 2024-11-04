@@ -12,14 +12,12 @@ import RegisterModel from "../dialog/RegisterModel";
 import VerifyModel from "../dialog/VerifyModel";
 import { useLoadUserQuery } from "@/redux/feature/api/apiSlice";
 import { useAppSelector } from "@/redux/hooks";
+import { Button } from "../ui/button";
 
 
 const Header = () => {
     const [active, setActive] = useState(false);
     const [openSidebar, setOpenSidebar] = useState(false);
-    const [isSignInOpen, setIsSignInOpen] = useState(false)
-    const [isRegisterOpen, setIsRegisterOpen] = useState(false)
-    const [isVerifyOpen, setIsVerifyOpen] = useState(false);
     const { isLoading } = useLoadUserQuery(undefined);
     const { user } = useAppSelector(state => state.auth);
 
@@ -85,11 +83,9 @@ const Header = () => {
                                         />
                                     </Link>
                                 ) : (
-                                    <HiOutlineUserCircle
-                                        size={25}
-                                        className="md:block cursor-pointer dark:text-white text-black"
-                                        onClick={() => setIsSignInOpen(true)}
-                                    />
+                                    <Link href="/signin">
+                                        <Button size="sm" >LogIn</Button>
+                                    </Link>
                                 )}
                             </div>
                         </div>
@@ -106,9 +102,6 @@ const Header = () => {
                         <NavItems isMobile={true} setOpenSidebar={setOpenSidebar} />
                     </motion.div>
                 </div>
-                <LoginModal isSignInOpen={isSignInOpen} setIsRegisterOpen={setIsRegisterOpen} setIsSignInOpen={setIsSignInOpen} />
-                <RegisterModel isRegisterOpen={isRegisterOpen} setIsRegisterOpen={setIsRegisterOpen} setIsSignInOpen={setIsSignInOpen} setIsVerifyOpen={setIsVerifyOpen} />
-                <VerifyModel isVerifyOpen={isVerifyOpen} setIsVerifyOpen={setIsVerifyOpen} setIsSignInOpen={setIsSignInOpen} />
             </div>
         </>
     );

@@ -1,17 +1,13 @@
 "use client"
 import { useRef, useState, useEffect } from 'react';
 import { Verified } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useActivationMutation } from '@/redux/feature/auth/authApi';
-import { useAppSelector } from '@/redux/hooks';
 import { toast } from 'sonner';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-type Props = {
-    isVerifyOpen: boolean;
-    setIsVerifyOpen: (isVerifyOpen: boolean) => void;
-    setIsSignInOpen: (isSignInOpen: boolean) => void
-};
 
 type TVerificationNumber = {
     "0": string;
@@ -20,8 +16,7 @@ type TVerificationNumber = {
     "3": string;
 };
 
-const VerifyModel = ({ isVerifyOpen, setIsVerifyOpen, setIsSignInOpen }: Props) => {
-    const { token } = useAppSelector(state => state.auth);
+const VerifyModel = ({ token }: { token: string }) => {
     const [activation, { isSuccess, error }] = useActivationMutation();
     const [invalidError, setInvalidError] = useState<boolean>(false);
     const [verifyNumber, setVerifyNumber] = useState<TVerificationNumber>({
@@ -30,12 +25,12 @@ const VerifyModel = ({ isVerifyOpen, setIsVerifyOpen, setIsSignInOpen }: Props) 
         "2": "",
         "3": "",
     });
+    const router = useRouter()
 
     useEffect(() => {
         if (isSuccess) {
+            router.push('/signin')
             toast.success("Account activated successfully");
-            setIsVerifyOpen(false);
-            setIsSignInOpen(true);
         }
         if (error) {
             if ("data" in error) {
@@ -43,11 +38,10 @@ const VerifyModel = ({ isVerifyOpen, setIsVerifyOpen, setIsSignInOpen }: Props) 
                 toast.error(errorData.data.message);
                 setInvalidError(true);
             } else {
-                console.log("An error occurred", error);
+                console.error("An error occurred", error);
             }
         }
-    }, [isSuccess, error, setIsVerifyOpen, setIsSignInOpen]);
-
+    }, [isSuccess, error]);
 
     const inputRefs = [
         useRef<HTMLInputElement>(null),
@@ -77,44 +71,43 @@ const VerifyModel = ({ isVerifyOpen, setIsVerifyOpen, setIsSignInOpen }: Props) 
     };
 
     return (
-        <Dialog open={isVerifyOpen} onOpenChange={() => setIsVerifyOpen(!isVerifyOpen)} >
-            <DialogContent className="sm:max-w-[370px]">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-center">Verify Your Account</DialogTitle>
-                </DialogHeader>
-                <div>
-                    <div className='w-full flex items-center justify-center mt-2'>
-                        <div className='w-20 h-20 rounded-full bg-[#497df2] flex items-center justify-center'>
-                            <Verified size={40} />
-                        </div>
+        <div className='h-screen flex flex-col justify-center items-center'>
+            <Card className="mx-auto max-w-sm p-6 rounded-lg shadow-md">
+                <CardHeader className="flex flex-col items-center">
+                    <div className='w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-4'>
+                        <Verified size={30} className="text-white" />
                     </div>
-                    <div className='m-auto flex items-center justify-around mt-6'>
+                    <CardTitle className="text-2xl font-bold text-center text-gray-800 dark:text-white">Verify Your Account</CardTitle>
+                    <p className="text-center text-gray-500 mt-1">Enter the 4-digit code sent to your email</p>
+                </CardHeader>
+                <CardContent className="mt-4">
+                    <div className='flex items-center justify-between mb-4'>
                         {Object.keys(verifyNumber).map((key, index) => (
                             <input
-                                type='number'
+                                type='text'
                                 key={key}
                                 ref={inputRefs[index]}
-                                className={`w-[65px] h-[65px] bg-transparent border-[3px] rounded-[10px] flex items-center text-black dark:text-white justify-center font-Poppins outline-none text-center ${invalidError ? "shake border-red-500" : "dark:border-white border-[#00000042]"}`}
-                                placeholder=''
+                                className={`w-12 h-12 border-2 text-center rounded-lg text-lg font-semibold outline-none ${invalidError ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
                                 maxLength={1}
-                                minLength={1}
-                                max={1}
                                 value={verifyNumber[key as keyof TVerificationNumber]}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
                             />
                         ))}
                     </div>
-                    <div className='w-full flex justify-center mt-6'>
-                        <Button onClick={verificationHandler}>Verify OTP</Button>
-                    </div>
-                    <h5 className='text-center pt-4 font-Poppins text-[14px]'>
-                        Go back to sign in
-                        <span className='text-[#2190ff] pl-1 cursor-pointer' onClick={() => setIsVerifyOpen(false)}>Sign In</span>
-                    </h5>
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
+                    {invalidError && <p className="text-center text-red-500 mb-4">Invalid code, please try again</p>}
+                    <Button className="w-full mt-4" onClick={verificationHandler}>Verify OTP</Button>
+                    <p className="text-center text-sm mt-4 text-gray-500">
+                        Go back to{" "}
+                        <Link href="/signin"
+                            className="text-blue-500 cursor-pointer font-semibold"
+                        >
+                            Sign In
+                        </Link>
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
+    )
 };
 
 export default VerifyModel;

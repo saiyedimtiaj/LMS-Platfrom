@@ -36,7 +36,7 @@ export default function RootLayout({
             </ThemeProvider>
           </Providers>
         </body>
-      </GoogleOAuthProvider>;
+      </GoogleOAuthProvider>
     </html>
   );
 }

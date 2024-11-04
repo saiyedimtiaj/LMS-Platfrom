@@ -25,6 +25,7 @@ import { useAppSelector } from "@/redux/hooks";
 import Loader from "../Loader/Loader";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 const stripePromise = loadStripe("pk_test_51OECa6JppFDY8B5jfeGOAt0HVDsH1z8BZu6NSWOsW99PJxw0EOfetFMN9MvhEsirRD6UHDNyKqotJ7V5bHqbmBc300bsjMYMxS");
 
 type Props = {
@@ -36,11 +37,9 @@ const CourseDetails = ({ id }: Props) => {
     const [paymentModalOpen, setPaymentModalOpen] = useState(false);
     const [clientSecret, setClientSecret] = useState('');
     const [createPaymentIntent] = useCreatePaymentIntentMutation();
-    const [isSignInOpen, setIsSignInOpen] = useState(false)
-    const [isRegisterOpen, setIsRegisterOpen] = useState(false)
-    const [isVerifyOpen, setIsVerifyOpen] = useState(false);
     const { user } = useAppSelector(state => state.auth);
-    const { theme } = useTheme()
+    const { theme } = useTheme();
+    const router = useRouter()
 
 
     useEffect(() => {
@@ -74,7 +73,7 @@ const CourseDetails = ({ id }: Props) => {
         if (user) {
             setPaymentModalOpen(true)
         } else {
-            setIsSignInOpen(true)
+            router.push('/signin')
         }
     }
 
@@ -204,13 +203,6 @@ const CourseDetails = ({ id }: Props) => {
                     </div>
                 </DialogContent>
             </Dialog>
-
-            <div>
-                <LoginModal isSignInOpen={isSignInOpen} setIsRegisterOpen={setIsRegisterOpen} setIsSignInOpen={setIsSignInOpen} />
-                <RegisterModel isRegisterOpen={isRegisterOpen} setIsRegisterOpen={setIsRegisterOpen} setIsSignInOpen={setIsSignInOpen} setIsVerifyOpen={setIsVerifyOpen} />
-                <VerifyModel isVerifyOpen={isVerifyOpen} setIsVerifyOpen={setIsVerifyOpen} setIsSignInOpen={setIsSignInOpen} />
-            </div>
-
         </div >
     );
 };
