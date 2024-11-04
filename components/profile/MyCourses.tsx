@@ -19,7 +19,7 @@ const MyCourses = () => {
 
     return (
         <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 -mr-4 md:mr-0">
                 {
                     data?.data?.map((item: ICourse) => {
                         const filterCourse = user?.data?.courses.find((course: TUserCourse) => course.courseId === item?._id)
