@@ -91,7 +91,7 @@ const columns: ColumnDef<Payment>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.original.userId.email}</div>,
+        cell: ({ row }) => <div className="lowercase">{row.original?.userId?.email}</div>,
     },
     {
         accessorKey: "amount",
@@ -111,7 +111,6 @@ const columns: ColumnDef<Payment>[] = [
 
 const Invoices = () => {
     const { data, isLoading, error } = useGetAllOrdersQuery(undefined)
-    console.log(data);
 
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(

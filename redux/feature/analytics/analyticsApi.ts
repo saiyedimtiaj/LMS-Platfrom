@@ -30,6 +30,13 @@ export const analyticsApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    getDashboardRevenueAnalytics: builder.query({
+      query: () => ({
+        url: "/dashboard-analytics-revenue",
+        method: "GET",
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
@@ -38,4 +45,5 @@ export const {
   useGetUsersAnalyticsQuery,
   useGetOrdersAnalyticsQuery,
   useGetDashboardAnalyticsQuery,
+  useGetDashboardRevenueAnalyticsQuery,
 } = analyticsApi;

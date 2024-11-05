@@ -11,7 +11,7 @@ const Courses = (props: Props) => {
     return (
         <div>
             <div className="container mx-auto px-4 mt-20">
-                <h1 className="text-center font-Poppins text-[25px] leading-[35px] sm:text-3xl lg:text-4xl dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight">
+                <h1 className="text-center font-Poppins md:text-3xl lg:text-5xl text-2xl leading-[35px]  dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight">
                     Expand Your Career <span className="text-gradient">Opportunity</span>{" "}
                     <br />
                     Opportunity With Our Courses

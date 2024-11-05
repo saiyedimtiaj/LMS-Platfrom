@@ -46,7 +46,7 @@ const faqData = [
 const Faq = () => {
     return (
         <div className='container mx-auto px-4'>
-            <h1 className="text-center font-Poppins text-[25px] leading-[35px] sm:text-3xl lg:text-4xl dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight mb-14">
+            <h1 className="text-center font-Poppins leading-[35px] md:text-3xl lg:text-5xl text-2xl dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight mb-14">
                 Frequently Asked
                 <br />Questions
             </h1>
@@ -54,10 +54,10 @@ const Faq = () => {
                 <Accordion type="single" collapsible className="w-full">
                     {faqData.map((item) => (
                         <AccordionItem key={item.id} value={item.id} className="border-0">
-                            <AccordionTrigger className="flex text-start justify-between flex-row-reverse text-lg md:text-2xl font-semibold">
+                            <AccordionTrigger className="flex text-start justify-between flex-row-reverse text-base md:text-lg lg:text-xl font-semibold">
                                 {item.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-[14px] text-start">
+                            <AccordionContent className="text-[12px] md:text-[14px] text-start">
                                 {item.answer}
                             </AccordionContent>
                         </AccordionItem>

@@ -29,7 +29,7 @@ const ReviewCard = ({
 
     return (
         <div className="mb-40 mt-40">
-            <h1 className="text-center font-Poppins text-[25px] leading-[35px] sm:text-3xl lg:text-4xl dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight mb-14">
+            <h1 className="text-center font-Poppins md:text-3xl lg:text-5xl text-2xl leading-[35px] dark:text-white 800px:!leading-[60px] text-[#000] font-[700] tracking-tight mb-14">
                 Our Student Says
             </h1>
             <div className={`relative container mx-auto ${className || ""}`}>

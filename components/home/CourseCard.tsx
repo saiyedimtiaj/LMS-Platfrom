@@ -24,6 +24,7 @@ const CourseCard: FC<Props> = ({ item, isProfile }) => {
             <h1 className="font-Josefin text-xl font-medium text-black dark:text-[#fff]">
                 {item.name}
             </h1>
+            <p className="text-sm text-gray-500 my-2">{item?.description?.slice(0, 100)}...</p>
             <Link href={`/courses/${item?._id}`}>
                 <Button className="w-full flex-grow-0 mt-1.5">View Details</Button>
             </Link>
